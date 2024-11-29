@@ -10,12 +10,16 @@ const client = new NetworkAsCodeClient(
 // Or you can identify a device with its ID,
 // IP address(es) and optionally, a phone number
 const myDevice = client.devices.get({
-  networkAccessIdentifier: "9784e2b9-fe9e-48c9-9ca1-2ecb9338049e@testcsp.net",
+  ipv4Address: {
+    publicAddress: "217.140.216.39",
+    privateAddress: "217.140.216.39",
+  },
+  // The phone number does not accept spaces or parentheses
+  phoneNumber: "+358311100539",
 });
 
-const mySession = await myDevice.createQodSession("DOWNLINK_L_UPLINK_L", {
-  serviceIpv4: "233.252.0.2",
-  serviceIpv6: "2001:db8:1234:5678:9abc:def0:fedc:ba98",
+const mySession = await myDevice.createQodSession("QOS_M", {
+  serviceIpv4: "217.140.216.29",
   // We create the session for 3600 seconds, so up to an hour
   duration: 3600,
 });
@@ -23,5 +27,5 @@ const mySession = await myDevice.createQodSession("DOWNLINK_L_UPLINK_L", {
 // Let's confirm that the device has the newly created session
 console.log(await myDevice.sessions());
 
-// Finally, remember to clear out the sessions for the device
-myDevice.clearSessions();
+// // Finally, remember to clear out the sessions for the device
+// myDevice.clearSessions();

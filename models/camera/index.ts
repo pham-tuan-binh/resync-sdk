@@ -85,35 +85,13 @@ export default class CameraManager {
     name: string,
     description: string,
     codec: string,
-    identificationType: IdentifierType,
     indentification: Identifier
   ): boolean {
     let device: Device;
 
-    switch (identificationType) {
-      case IdentifierType.NETWORK_ACCESS_ID:
-        device = this.client.devices.get({
-          networkAccessIdentifier: indentification,
-        });
-        break;
-      case IdentifierType.IP_V4:
-        device = this.client.devices.get({
-          ipv4_address: indentification,
-        });
-        break;
-      case IdentifierType.IP_V6:
-        device = this.client.devices.get({
-          ipv6_address: indentification,
-        });
-        break;
-      case IdentifierType.PHONE_NUMBER:
-        device = this.client.devices.get({
-          phone_number: indentification,
-        });
-        break;
-      default:
-        return false;
-    }
+    device = this.client.devices.get({
+      ...indentification,
+    });
 
     const camera: Camera = {
       name,
@@ -125,7 +103,6 @@ export default class CameraManager {
         footageSyncStatus: false,
         timeSyncStatus: false,
       },
-      identifierType: identificationType,
       identification: indentification,
     };
 
@@ -177,7 +154,7 @@ export default class CameraManager {
       uplinkCategory = "L";
     }
 
-    const qosProfile = `DOWNLINK_${downlinkCategory}_UPLINK_${uplinkCategory}`;
+    const qosProfile = `QOS_${uplinkCategory}`;
 
     return qosProfile;
   }
@@ -188,7 +165,8 @@ export default class CameraManager {
     codec: CAMERA_CODEC,
     resolution: RESOLUTION,
     framerate: number,
-    duration: number
+    duration: number,
+    destinationIP: string
   ): Promise<boolean> {
     const camera = this.cameras.find((camera) => camera.name === cameraName);
 
@@ -203,7 +181,7 @@ export default class CameraManager {
       framerate
     );
     const session = await camera.device.createQodSession(profile, {
-      serviceIpv4: this.serverIP,
+      serviceIpv4: destinationIP,
       duration: duration,
     });
 

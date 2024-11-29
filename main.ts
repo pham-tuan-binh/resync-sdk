@@ -13,13 +13,14 @@ const manager: CameraManager = CameraManager.getInstance(
   "192.129.1.1"
 );
 
-manager.addCamera(
-  "Camera 1",
-  "Front Door",
-  "H.264",
-  IdentifierType.NETWORK_ACCESS_ID,
-  "f7403126-c4e2-45dd-89ed-9090a6f1ba43@testcsp.net"
-);
+manager.addCamera("Camera 1", "Front Door", "H.264", {
+  ipv4Address: {
+    publicAddress: "217.140.216.39",
+    privateAddress: "217.140.216.39",
+  },
+  // The phone number does not accept spaces or parentheses
+  phoneNumber: "+358311100539",
+});
 
 let location = await manager.getCameraLocation("Camera 1");
 console.log(location);
@@ -29,9 +30,8 @@ let session = await manager.createSession(
   CAMERA_CODEC.PRORES_4444,
   RESOLUTION._4K,
   24,
-  120
+  120,
+  "217.140.216.29"
 );
 
-// let sessions = await manager.getSessions("Camera 1");
-// let connectionStatus = await manager.getCameraStatus("Camera 1");
-// console.log(connectionStatus);
+manager.terminateAllSessions("Camera 1");
